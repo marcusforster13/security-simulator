@@ -1,8 +1,12 @@
+import { useMemo, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import Environment from '../Environment/Environment.jsx';
 import EquipmentRenderer from '../Equipment/EquipmentRenderer.jsx';
+import CoverageOverlay from '../Coverage/CoverageOverlay.jsx';
 import { useProjectStore } from '../../store/useProjectStore.js';
+import { computeCoverage } from '../../simulation/coverageEngine/coverageEngine.js';
+import { computeGroundDimensions } from '../../utils/layout.js';
 
 /**
  * Cena 3D base do simulador.
@@ -20,6 +24,23 @@ import { useProjectStore } from '../../store/useProjectStore.js';
  */
 export default function Scene() {
   const setSelectedEquipmentId = useProjectStore((s) => s.setSelectedEquipmentId);
+  const event = useProjectStore((s) => s.event);
+  const equipments = useProjectStore((s) => s.equipments);
+  const setCoverage = useProjectStore((s) => s.setCoverage);
+
+  const { width, depth } = computeGroundDimensions(event);
+
+  // Recalcula a cobertura sempre que os equipamentos ou o tamanho do
+  // terreno mudam. Guardada no store para o Dashboard (fora do Canvas)
+  // conseguir ler o mesmo resultado sem duplicar o cálculo.
+  const coverage = useMemo(
+    () => computeCoverage(equipments, width, depth),
+    [equipments, width, depth]
+  );
+
+  useEffect(() => {
+    setCoverage(coverage);
+  }, [coverage, setCoverage]);
 
   return (
     <Canvas
@@ -39,6 +60,7 @@ export default function Scene() {
 
       <Environment />
       <EquipmentRenderer />
+      <CoverageOverlay coverage={coverage} />
 
       {/* Grid de referência — ajuda a validar escala (1 unidade = 1 metro) durante o desenvolvimento */}
       <Grid
