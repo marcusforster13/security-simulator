@@ -1,17 +1,28 @@
 import Scene from './three/Scene/Scene.jsx';
+import EventSetupForm from './components/forms/EventSetupForm.jsx';
+import { useProjectStore } from './store/useProjectStore.js';
 
 /**
- * Entrega da Fase 0/1: uma cena 3D navegável em tela cheia.
+ * Máquina de estados simples de "telas" macro da aplicação, controlada
+ * por appPhase (Seções 27-30 do PRD: Landing -> Setup -> Building -> Simulator).
  *
- * O que vem a seguir (não implementado ainda, de propósito):
- * - appPhase do store vai controlar quando mostrar landing/formulário
- *   por cima desta cena, em vez da cena ocupar a tela toda sempre.
- * - Painéis (menu de equipamentos, dashboard) entram na Fase 3/7 do PRD.
+ * Ainda não implementados de propósito (próximas fases):
+ * - 'landing': tela de apresentação cinematográfica (Seção 27)
+ * - 'building': animação de construção do cenário (Seção 29)
+ * Por ora, o fluxo pula direto para 'setup' -> 'simulator'.
  */
 export default function App() {
-  return (
-    <div className="w-screen h-screen">
-      <Scene />
-    </div>
-  );
+  const appPhase = useProjectStore((s) => s.appPhase);
+
+  if (appPhase === 'simulator') {
+    return (
+      <div className="w-screen h-screen">
+        <Scene />
+      </div>
+    );
+  }
+
+  // 'landing' e 'setup' caem aqui por enquanto — landing cinematográfica
+  // ainda não implementada, então já mostramos o formulário direto.
+  return <EventSetupForm />;
 }

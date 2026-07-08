@@ -1,15 +1,14 @@
 /**
- * Terreno placeholder.
+ * Terreno procedural.
  *
- * Na Fase 2 (Construção do Ambiente), isto vira geração procedural real
- * a partir de event.areaSqm (definindo largura/profundidade proporcional
- * à área informada no formulário). Por agora, é um plano fixo só para
- * validar navegação e escala da cena.
+ * Fase 2: o tamanho agora vem de event.areaSqm (formulário), não é mais
+ * fixo. width/depth já chegam calculados por estimateGroundDimensions()
+ * em utils/geometry.js, mantendo a convenção 1 unidade = 1 metro.
  */
-export default function Ground({ size = 200 }) {
+export default function Ground({ width = 200, depth = 200 }) {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-      <planeGeometry args={[size, size]} />
+      <planeGeometry args={[width, depth]} />
       <meshStandardMaterial color="#1a2332" />
     </mesh>
   );

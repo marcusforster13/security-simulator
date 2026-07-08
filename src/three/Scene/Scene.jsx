@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Grid, Environment as DreiEnvironment } from '@react-three/drei';
-import Ground from '../Environment/Ground.jsx';
+import { OrbitControls, Grid } from '@react-three/drei';
+import Environment from '../Environment/Environment.jsx';
 
 /**
  * Cena 3D base do simulador.
@@ -32,7 +32,7 @@ export default function Scene() {
         shadow-mapSize={[2048, 2048]}
       />
 
-      <Ground size={200} />
+      <Environment />
 
       {/* Grid de referência — ajuda a validar escala (1 unidade = 1 metro) durante o desenvolvimento */}
       <Grid
