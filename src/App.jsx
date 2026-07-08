@@ -2,6 +2,7 @@ import Scene from './three/Scene/Scene.jsx';
 import EventSetupForm from './components/forms/EventSetupForm.jsx';
 import EquipmentInfoPanel from './components/panels/EquipmentInfoPanel.jsx';
 import Dashboard from './components/panels/Dashboard.jsx';
+import IncidentPanel from './components/panels/IncidentPanel.jsx';
 import { useProjectStore } from './store/useProjectStore.js';
 
 /**
@@ -21,6 +22,7 @@ export default function App() {
       <div className="w-screen h-screen relative">
         <Scene />
         <Dashboard />
+        <IncidentPanel />
         <EquipmentInfoPanel />
       </div>
     );

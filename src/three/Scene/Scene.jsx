@@ -4,6 +4,7 @@ import { OrbitControls, Grid } from '@react-three/drei';
 import Environment from '../Environment/Environment.jsx';
 import EquipmentRenderer from '../Equipment/EquipmentRenderer.jsx';
 import CoverageOverlay from '../Coverage/CoverageOverlay.jsx';
+import IncidentMarker from '../Incident/IncidentMarker.jsx';
 import { useProjectStore } from '../../store/useProjectStore.js';
 import { computeCoverage } from '../../simulation/coverageEngine/coverageEngine.js';
 import { computeGroundDimensions } from '../../utils/layout.js';
@@ -61,6 +62,7 @@ export default function Scene() {
       <Environment />
       <EquipmentRenderer />
       <CoverageOverlay coverage={coverage} />
+      <IncidentMarker />
 
       {/* Grid de referência — ajuda a validar escala (1 unidade = 1 metro) durante o desenvolvimento */}
       <Grid

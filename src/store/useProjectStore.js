@@ -60,4 +60,20 @@ export const useProjectStore = create((set) => ({
 
   selectedEquipmentId: null,
   setSelectedEquipmentId: (id) => set({ selectedEquipmentId: id }),
+
+  // Preenchido pelo IncidentEngine quando uma simulação de ocorrência
+  // está ativa (Seção 19/35 do PRD). null = nenhuma simulação rodando.
+  incidentSimulation: null,
+  startIncidentSimulation: (simulation) =>
+    set({ incidentSimulation: { ...simulation, currentStepIndex: 0 } }),
+  advanceIncidentStep: () =>
+    set((state) => {
+      if (!state.incidentSimulation) return {};
+      const next = Math.min(
+        state.incidentSimulation.currentStepIndex + 1,
+        state.incidentSimulation.steps.length
+      );
+      return { incidentSimulation: { ...state.incidentSimulation, currentStepIndex: next } };
+    }),
+  clearIncidentSimulation: () => set({ incidentSimulation: null }),
 }));
