@@ -1,5 +1,6 @@
 import Scene from './three/Scene/Scene.jsx';
 import EventSetupForm from './components/forms/EventSetupForm.jsx';
+import EquipmentInfoPanel from './components/panels/EquipmentInfoPanel.jsx';
 import { useProjectStore } from './store/useProjectStore.js';
 
 /**
@@ -16,8 +17,9 @@ export default function App() {
 
   if (appPhase === 'simulator') {
     return (
-      <div className="w-screen h-screen">
+      <div className="w-screen h-screen relative">
         <Scene />
+        <EquipmentInfoPanel />
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useProjectStore } from '../../store/useProjectStore.js';
+import { generateInitialPlacement } from '../../simulation/placementEngine/placementEngine.js';
 
 const EVENT_TYPES = [
   { value: 'show', label: 'Show' },
@@ -26,12 +27,20 @@ export default function EventSetupForm() {
   const event = useProjectStore((s) => s.event);
   const setEvent = useProjectStore((s) => s.setEvent);
   const setAppPhase = useProjectStore((s) => s.setAppPhase);
+  const setEquipments = useProjectStore((s) => s.setEquipments);
 
   const [localName, setLocalName] = useState(event.name);
 
   function handleSubmit(e) {
     e.preventDefault();
+    const finalEvent = { ...event, name: localName };
     setEvent({ name: localName });
+
+    // Gera o posicionamento automático (Seção 17 do PRD) a partir dos
+    // dados recém-preenchidos, antes de trocar de tela.
+    const placement = generateInitialPlacement(finalEvent);
+    setEquipments(placement);
+
     setAppPhase('simulator'); // Tela de Construção Automática entra depois; por ora vai direto pro simulador
   }
 

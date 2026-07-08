@@ -1,6 +1,8 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import Environment from '../Environment/Environment.jsx';
+import EquipmentRenderer from '../Equipment/EquipmentRenderer.jsx';
+import { useProjectStore } from '../../store/useProjectStore.js';
 
 /**
  * Cena 3D base do simulador.
@@ -17,10 +19,13 @@ import Environment from '../Environment/Environment.jsx';
  * entregável simples e testável.
  */
 export default function Scene() {
+  const setSelectedEquipmentId = useProjectStore((s) => s.setSelectedEquipmentId);
+
   return (
     <Canvas
       shadows
       camera={{ position: [40, 40, 40], fov: 50, near: 0.1, far: 2000 }}
+      onPointerMissed={() => setSelectedEquipmentId(null)}
     >
       <color attach="background" args={['#0a0e14']} />
 
@@ -33,6 +38,7 @@ export default function Scene() {
       />
 
       <Environment />
+      <EquipmentRenderer />
 
       {/* Grid de referência — ajuda a validar escala (1 unidade = 1 metro) durante o desenvolvimento */}
       <Grid

@@ -1,10 +1,14 @@
-import { useMemo } from 'react';
 import Ground from './Ground.jsx';
 import Stage from './Stage.jsx';
 import Entrance from './Entrance.jsx';
 import Parking from './Parking.jsx';
 import { useProjectStore } from '../../store/useProjectStore.js';
-import { estimateGroundDimensions } from '../../utils/geometry.js';
+import {
+  computeGroundDimensions,
+  computeEntrancePositions,
+  computeStagePosition,
+  computeParkingPosition,
+} from '../../utils/layout.js';
 
 /**
  * Transforma os dados brutos do formulário (event.*) em uma cena procedural.
@@ -16,45 +20,30 @@ import { estimateGroundDimensions } from '../../utils/geometry.js';
  *  ├── Palco             -> Stage
  *  └── Estacionamento    -> Parking (condicional)
  *
- * Cada elemento é posicionado usando geometria simples (perímetro de
- * retângulo), suficiente para o MVP. Regras mais sofisticadas de
- * distribuição (evitar sobreposição com áreas críticas, por exemplo)
- * entram no PlacementEngine mais adiante — este componente só desenha
- * o que os dados básicos do evento já determinam.
+ * As posições vêm de utils/layout.js — a mesma fonte usada pelo
+ * PlacementEngine, garantindo que os equipamentos sejam posicionados
+ * de forma consistente com o ambiente visual.
  */
 export default function Environment() {
   const event = useProjectStore((s) => s.event);
 
-  const { width, depth } = useMemo(
-    () => estimateGroundDimensions(event.areaSqm),
-    [event.areaSqm]
-  );
-
-  // Distribui as entradas ao longo da borda "frontal" do terreno (eixo +z),
-  // espaçadas uniformemente. Simples e previsível — evita entradas
-  // se sobrepondo ao palco (que fica na borda oposta, -z).
-  const entrancePositions = useMemo(() => {
-    const count = Math.max(1, event.entrances);
-    const spacing = width / (count + 1);
-    return Array.from({ length: count }, (_, i) => [
-      -width / 2 + spacing * (i + 1),
-      0,
-      depth / 2 - 5,
-    ]);
-  }, [event.entrances, width, depth]);
+  const { width, depth } = computeGroundDimensions(event);
+  const entrancePositions = computeEntrancePositions(event);
+  const stagePosition = computeStagePosition(event);
+  const parkingPosition = computeParkingPosition(event);
 
   return (
     <group>
       <Ground width={width} depth={depth} />
 
-      <Stage position={[0, 0, -depth / 2 + 15]} />
+      <Stage position={[stagePosition.x, stagePosition.y, stagePosition.z]} />
 
       {entrancePositions.map((pos, i) => (
-        <Entrance key={i} position={pos} label={`Entrada ${i + 1}`} />
+        <Entrance key={i} position={[pos.x, pos.y, pos.z]} label={`Entrada ${i + 1}`} />
       ))}
 
       {event.hasParking && (
-        <Parking position={[width / 2 - 20, 0, -depth / 2 + 15]} />
+        <Parking position={[parkingPosition.x, parkingPosition.y, parkingPosition.z]} />
       )}
     </group>
   );
